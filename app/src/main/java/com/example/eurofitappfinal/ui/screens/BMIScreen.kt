@@ -16,7 +16,13 @@ import com.example.eurofitappfinal.viewmodel.UserViewModel
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun BMIScreen(navController: NavController, userViewModel: UserViewModel = viewModel()) {
-    val userData by userViewModel.userData.collectAsState()
+    val userData by userViewModel.userData.collectAsState(initial = null)
+
+    if (userData == null) {
+        Text("Cargando datos del usuario...", style = MaterialTheme.typography.h6)
+        return // Evita ejecutar el resto del código si aún no hay datos
+    }
+
 
     Scaffold(
         topBar = {
@@ -57,7 +63,10 @@ fun BMIScreen(navController: NavController, userViewModel: UserViewModel = viewM
                 Button(onClick = { navController.popBackStack() }) {
                     Text("Volver")
                 }
-            } ?: Text("No se encontraron datos del usuario")
+            } ?: run {
+                Text("Cargando datos del usuario...", style = MaterialTheme.typography.h6)
+            }
+
         }
     }
 }

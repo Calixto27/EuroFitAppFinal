@@ -21,14 +21,9 @@ fun LoginScreen(navController: NavController, userViewModel: UserViewModel = vie
     var errorMessage by remember { mutableStateOf("") }
     var showChangePasswordDialog by remember { mutableStateOf(false) }
 
-    // ✅ Obtener la contraseña almacenada desde DataStore
-    val userData by userViewModel.userData.collectAsState()
-    var storedPassword by remember { mutableStateOf("1234") } // Contraseña por defecto
-
-    // ✅ Se actualiza `storedPassword` cuando cambia `userData`
-    LaunchedEffect(userData) {
-        storedPassword = userData?.password ?: "1234"
-    }
+    // ✅ Corregido: Ahora userData tiene un valor inicial seguro
+    val userData by userViewModel.userData.collectAsState(initial = null)
+    val storedPassword = userData?.password ?: "1234" // 🔹 Contraseña por defecto
 
     Scaffold(
         topBar = {

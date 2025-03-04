@@ -61,7 +61,6 @@ dependencies {
 
     // Lifecycle y ViewModel para Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
 
     // Navigation Compose

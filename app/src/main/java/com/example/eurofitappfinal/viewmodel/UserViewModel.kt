@@ -1,6 +1,7 @@
 package com.example.eurofitappfinal.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eurofitappfinal.data.UserPreferences
@@ -12,18 +13,20 @@ import kotlinx.coroutines.Dispatchers
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val userPreferences = UserPreferences(application)
 
-    // ✅ Convertimos el Flow en un StateFlow para evitar bloqueos
+    // ✅ Flow que recibe datos de DataStore
     val userData: StateFlow<UserData?> = userPreferences.userFlow
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    // ✅ Guardar los datos del usuario en `Dispatchers.IO`
+    // ✅ Guardar datos en DataStore
     fun saveUser(user: UserData) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
+            Log.d("UserViewModel", "Guardando usuario en ViewModel: $user") // Debug
             userPreferences.saveUser(user)
         }
     }
 
-    // ✅ Actualizar la contraseña en `Dispatchers.IO`
+
+
     fun updatePassword(newPassword: String) {
         viewModelScope.launch(Dispatchers.IO) {
             userPreferences.updatePassword(newPassword)

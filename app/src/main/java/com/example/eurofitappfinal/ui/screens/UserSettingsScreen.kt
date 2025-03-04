@@ -18,20 +18,21 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun UserSettingsScreen(
-    navController: NavHostController,  // ✅ Arreglado: `NavHostController` para la navegación
-    userViewModel: UserViewModel = viewModel(),  // ✅ Arreglado: `UserViewModel` correctamente inicializado
+    navController: NavHostController,
+    userViewModel: UserViewModel = viewModel(),
     onThemeChange: (Boolean) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val userDataState = userViewModel.userData.collectAsState(initial = null)
+    val userDataState by userViewModel.userData.collectAsState(initial = null)
 
     var age by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
 
-    LaunchedEffect(userDataState.value) {
-        userDataState.value?.let { user ->
+    // ✅ Se actualizan los campos con los valores actuales del usuario
+    LaunchedEffect(userDataState) {
+        userDataState?.let { user ->
             age = user.age.toString()
             height = user.height.toString()
             weight = user.weight.toString()
@@ -44,17 +45,17 @@ fun UserSettingsScreen(
             TopAppBar(
                 title = { Text("Configuración de Usuario") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) { // ✅ Arreglado: `navController.popBackStack()`
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
                     }
                 }
             )
         }
-    ) { paddingValues -> // ✅ Se usa correctamente `paddingValues`
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // ✅ Se usa correctamente el padding de `Scaffold`
+                .padding(paddingValues)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -74,13 +75,14 @@ fun UserSettingsScreen(
 
             Button(onClick = {
                 coroutineScope.launch {
-                    userDataState.value?.let { currentUser ->
-                        val updatedUser = currentUser.copy( // ✅ Usar `.copy()` en lugar de crear un nuevo objeto
+                    userDataState?.let { currentUser ->
+                        val updatedUser = currentUser.copy(
                             age = age.toIntOrNull() ?: currentUser.age,
                             height = height.toDoubleOrNull() ?: currentUser.height,
                             weight = weight.toDoubleOrNull() ?: currentUser.weight,
                             gender = gender
                         )
+                        println("Guardando datos: $updatedUser") // 🔍 Verifica los datos antes de guardar
                         userViewModel.saveUser(updatedUser)
                     }
                 }

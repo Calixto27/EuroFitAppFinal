@@ -2,12 +2,14 @@ package com.example.eurofitappfinal.ui.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -28,6 +30,10 @@ fun TestDetailScreen(
 
     var userValue by remember { mutableStateOf("") }
     var score by remember { mutableStateOf<Double?>(null) }
+    var selectedGender by remember { mutableStateOf("Masculino") } // 🔹 Género por defecto
+    val genderOptions = listOf("Masculino", "Femenino")
+
+    val userAge = testResults.firstOrNull()?.userId ?: 12 // 🔹 Sustituir por la edad real del usuario
 
     Scaffold(
         topBar = {
@@ -42,24 +48,55 @@ fun TestDetailScreen(
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Ingrese su resultado para $testName")
+            Text("Ingrese su resultado para $testName", style = MaterialTheme.typography.h6)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 🔹 Selector de género
+            var expanded by remember { mutableStateOf(false) }
+            Box {
+                OutlinedButton(onClick = { expanded = true }) {
+                    Text(selectedGender)
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    genderOptions.forEach { gender ->
+                        DropdownMenuItem(onClick = {
+                            selectedGender = gender
+                            expanded = false
+                        }) {
+                            Text(gender)
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 🔹 Campo para ingresar el resultado
             OutlinedTextField(
                 value = userValue,
                 onValueChange = { userValue = it },
-                label = { Text("Ingrese su marca") }
+                label = { Text("Ingrese su marca") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // 🔹 Botón para calcular la nota
             Button(onClick = {
                 val value = userValue.toDoubleOrNull()
                 if (value != null) {
-                    val userId = testResults.firstOrNull()?.userId ?: 12
-                    score = ScoringRepository.getScore(testName, userId, "Masculino", value)
+                    score = ScoringRepository.getScore(testName, userAge, selectedGender, value)
                 }
             }) {
                 Text("Calcular Nota")
@@ -67,8 +104,13 @@ fun TestDetailScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // 🔹 Mostrar la nota obtenida
             score?.let {
-                Text("Su nota es: $it", style = MaterialTheme.typography.h6)
+                Text("Su nota es: $it", style = MaterialTheme.typography.h5)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 🔹 Botón para guardar el resultado
                 Button(onClick = {
                     coroutineScope.launch {
                         testResultViewModel.saveResults(
