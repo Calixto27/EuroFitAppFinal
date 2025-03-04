@@ -1,6 +1,7 @@
 package com.example.eurofitappfinal.ui.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,56 +29,77 @@ import com.example.eurofitappfinal.navigation.Screens
 @Composable
 fun HomeScreen(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
-    val testList = remember { TestRepository.testList } // 🔹 Guardamos la lista en un `remember`
+    val testList = remember { TestRepository.testList }
     val filteredTests = remember(searchQuery) {
         testList.filter { it.name.contains(searchQuery, ignoreCase = true) }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Pruebas Físicas") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { navController.navigate(Screens.BMI.route) }) {
-                        Icon(Icons.Default.Favorite, contentDescription = "IMC")
-                    }
-                    IconButton(onClick = { navController.navigate(Screens.UserSettings.route) }) {
-                        Icon(Icons.Default.Settings, contentDescription = "Configuración")
-                    }
-                    IconButton(onClick = { navController.navigate(Screens.TestResults.route) }) {
-                        Icon(Icons.Default.List, contentDescription = "Resultados")
-                    }
-                }
-            )
-        }
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                label = { Text("Buscar prueba") },
-                modifier = Modifier.fillMaxWidth()
-            )
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Imagen de fondo
+        Image(
+            painter = painterResource(id = R.drawable.fondo), // Asegúrate de tener esta imagen en res/drawable
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Scaffold(
+            backgroundColor = MaterialTheme.colors.background.copy(alpha = 0.3f),
+            topBar = {
+                TopAppBar(
+                    title = { Text("Pruebas Físicas") },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { navController.navigate(Screens.BMI.route) }) {
+                            Icon(Icons.Default.Favorite, contentDescription = "IMC")
+                        }
+                        IconButton(onClick = { navController.navigate(Screens.UserSettings.route) }) {
+                            Icon(Icons.Default.Settings, contentDescription = "Configuración")
+                        }
+                        IconButton(onClick = { navController.navigate(Screens.TestResults.route) }) {
+                            Icon(Icons.Default.List, contentDescription = "Resultados")
+                        }
+                    }
+                )
+            }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    label = { Text("Buscar prueba") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        backgroundColor = MaterialTheme.colors.surface.copy(alpha = 0.8f)
+                    )
+                )
 
-            if (filteredTests.isEmpty()) {
-                Text("No se encontraron pruebas", style = MaterialTheme.typography.body1)
-            } else {
-                LazyColumn {
-                    items(filteredTests) { test ->
-                        TestItem(test, navController)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (filteredTests.isEmpty()) {
+                    Text("No se encontraron pruebas", style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
+                } else {
+                    LazyColumn {
+                        items(filteredTests) { test ->
+                            TestItem(test, navController)
+                        }
                     }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun TestItem(test: TestModel, navController: NavController) {

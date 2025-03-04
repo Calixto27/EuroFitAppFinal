@@ -1,14 +1,18 @@
 package com.example.eurofitappfinal.ui.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.eurofitappfinal.R
 import com.example.eurofitappfinal.navigation.Screens
 import com.example.eurofitappfinal.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
@@ -20,16 +24,19 @@ fun LoginScreen(navController: NavController, userViewModel: UserViewModel = vie
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     var showChangePasswordDialog by remember { mutableStateOf(false) }
-
-    // ✅ Corregido: Ahora userData tiene un valor inicial seguro
     val userData by userViewModel.userData.collectAsState(initial = null)
-    val storedPassword = userData?.password ?: "1234" // 🔹 Contraseña por defecto
-
+    val storedPassword = userData?.password ?: "1234"
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Inicio de Sesión") })
         }
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.fondo_login), // Usa el nombre de tu imagen en drawable
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -2,6 +2,7 @@ package com.example.eurofitappfinal.ui.screens
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -9,10 +10,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.eurofitappfinal.R
 import com.example.eurofitappfinal.viewmodel.TestResultViewModel
 import kotlinx.coroutines.launch
 
@@ -37,30 +41,46 @@ fun TestResultsScreen(
                 }
             )
         }
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            Text(text = "Historial de pruebas:", style = MaterialTheme.typography.h6)
-            Spacer(modifier = Modifier.height(16.dp))
+            // Imagen de fondo
+            Image(
+                painter = painterResource(id = R.drawable.fondo),
+                contentDescription = "Fondo Resultados",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
 
-            if (results.isEmpty()) {
-                Text("No hay resultados guardados")
-            } else {
-                results.forEach { result ->
-                    Text("${result.testName}: ${result.score}")
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Historial de pruebas:", style = MaterialTheme.typography.h6)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (results.isEmpty()) {
+                    Text("No hay resultados guardados")
+                } else {
+                    results.forEach { result ->
+                        Text("${result.testName}: ${result.score}")
+                    }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Button(onClick = {
-                coroutineScope.launch {
-                    shareResults(context, results.joinToString("\n") { "${it.testName}: ${it.score}" })
+                Button(onClick = {
+                    coroutineScope.launch {
+                        shareResults(context, results.joinToString("\n") { "${it.testName}: ${it.score}" })
+                    }
+                }) {
+                    Text("Exportar Resultados")
                 }
-            }) {
-                Text("Exportar Resultados")
             }
         }
     }
