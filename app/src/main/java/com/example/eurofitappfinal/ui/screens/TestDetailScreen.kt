@@ -58,7 +58,7 @@ fun TestDetailScreen(
         ) {
             // Imagen de fondo
             Image(
-                painter = painterResource(id = R.drawable.fondo),
+                painter = painterResource(id = R.drawable.fondo2),
                 contentDescription = "Fondo Test",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

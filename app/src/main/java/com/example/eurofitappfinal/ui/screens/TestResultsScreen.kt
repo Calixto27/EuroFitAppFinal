@@ -49,7 +49,7 @@ fun TestResultsScreen(
         ) {
             // Imagen de fondo
             Image(
-                painter = painterResource(id = R.drawable.fondo),
+                painter = painterResource(id = R.drawable.fondo2),
                 contentDescription = "Fondo Resultados",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

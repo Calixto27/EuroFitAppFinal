@@ -63,7 +63,7 @@ fun UserSettingsScreen(
         ) {
             // Imagen de fondo
             Image(
-                painter = painterResource(id = R.drawable.fondo),
+                painter = painterResource(id = R.drawable.fondo2),
                 contentDescription = "Fondo Configuración",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

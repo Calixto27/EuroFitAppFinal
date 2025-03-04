@@ -46,7 +46,7 @@ fun BMIScreen(navController: NavController, userViewModel: UserViewModel = viewM
         ) {
             // Imagen de fondo
             Image(
-                painter = painterResource(id = R.drawable.fondo), // Asegúrate de que la imagen está en res/drawable
+                painter = painterResource(id = R.drawable.fondo2), // Asegúrate de que la imagen está en res/drawable
                 contentDescription = "Fondo BMI",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
